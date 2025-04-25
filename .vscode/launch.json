@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "dagster dev",
+            "name": "Python: Dagster Dev",
             "type": "debugpy",
             "request": "launch",
             "module": "dagster",
@@ -15,6 +15,11 @@
             "subProcess": true,
             // uncomment next line, if you need to debug dagster more deeply
             // "justMyCode": false
+            "serverReadyAction":{
+                "pattern": "Serving dagster-webserver on http://127.0.0.1:(\\d+)",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally",
+            },
         },
     ]
 }

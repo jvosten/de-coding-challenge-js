@@ -18,8 +18,10 @@ pandas = ">=2.2.2"
 boto3-stubs = {extras = ["s3"], version = ">=1.35.14"}
 dagster-webserver = ">=1.8.4"
 ipykernel = ">=6.29.4"
+pandas-stubs = "^2.2.3.250308"
 pytest-cov = ">=5.0.0"
 ruff = ">=0.5.1"
+types-requests = "^2.32.0.20250328"
 
 [build-system]
 requires = ["poetry-core"]
@@ -38,4 +40,14 @@ target-version = "py310"
 quote-style = "single"
 
 [tool.ruff.lint]
-extend-select = ["I"] # sort imports
+# sort imports
+extend-select = ["I"]
+# Enable all `pydocstyle` rules, limiting to those that adhere to the
+# Google convention via `convention = "google"`, below.
+select = ["D"]
+ignore = [
+    "D100", # ignore module docstrings
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

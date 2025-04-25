@@ -7,20 +7,22 @@ The report compares the developer communities of the Python clients for three la
 * Apache Iceberg ([iceberg-python](https://github.com/apache/iceberg-python))
 * Delta Lake ([delta-rs](https://github.com/delta-io/delta-rs))
 
-The report has the following format (example data as of 2024-09-16):
+The report has the following format (report data as of 2025-04-25):
 |                                 | delta-rs | iceberg-python | hudi-rs |
 |---------------------------------|---------:|---------------:|--------:|
-| stars                           | 2153     | 383            | 136     |
-| forks                           | 384      | 140            | 28      |
-| watchers                        | 37       | 29             | 18      |
-| releases                        | 73       | 5              | 1       |
-| open issues                     | 209      | 123            | 26      |
-| closed issues                   | 879      | 226            | 24      |
-| avg days until issue was closed | 122.1    | 45.6           | 10.6    |
-| open PRs                        | 19       | 54             | 10      |
-| closed PRs                      | 1676     | 774            | 83      |
-| avg days until PR was closed    | 8.8      | 6.1            | 4.2     |
-> *Note*: The avg days KPIs should be rounded to one decimal place. The average days, how long an issue or PR was open, should be calculated by subtracting the field `created_at` from `closed_at` per item and calculate the overall mean value.
+| stars                           | 2705     | 695            | 209     |
+| forks                           | 468      | 268            | 42      |
+| watchers                        | 37       | 31             | 17      |
+| releases                        | 89       | 10             | 3       |
+| open issues                     | 139      | 151            | 28      |
+| closed issues                   | 1130     | 431            | 62      |
+| avg days until issue was closed | 134.5    | 67.3           | 38.1    |
+| open PRs                        | 17       | 76             | 13      |
+| closed PRs                      | 1973     | 1292           | 222     |
+| avg days until PR was closed    | 9.8      | 8.1            | 8.3     |
+> *Note*:  
+> * The avg days KPIs should be rounded to one decimal place. 
+> * The average days, how long an issue or PR was open, should be calculated by subtracting the field `created_at` from `closed_at` per item and calculate the overall mean value afterwards.
 
 
 ## Getting Started
@@ -52,11 +54,17 @@ Open the `.env` file and set the correct environment variables for the user and 
 Later, you could add a GitHub API access token as well. For running the job for the first time,
 the rate-limiting of the unauthenticated access is enough (60 calls per hour).
 For creating a GitHub token, you need a GitHub account.
-Visit this page to create a personal access token: https://github.com/settings/tokens
+Visit this page to create a personal access token (classic): https://github.com/settings/tokens.
+You don't need to select any specific scope for the token. It will be only used to access public data via the GitHub API.
 
 3. **Install virtual environment:**
+If you use Poetry v1
 ```bash
 poetry install --sync
+```
+or for Poetry v2
+```bash
+poetry sync
 ```
 
 4. **Setup MinIO (bucket `data-lake-local` will be created automatically):**
@@ -86,7 +94,7 @@ docker compose up -d
 2. **Start the Dagster Web UI:**
 
 **If you use VS Code,** you could start the web server in debugging mode (e.g. by pressing `F5`):
-Open http://localhost:3000 with your browser to see the project.
+The Dagster Web UI should open automatically in your browser. Otherwise, open http://localhost:3000 in your browser to see the project.
 You could set breakpoints in the code, which are respected, when you execute jobs in the Dagster Web UI.
 When you click the stop icon in the debugging menu bar or press `Shift`+`F5`, you would stop the debugging mode fully, which terminates the Dagster server.
 Therefore, you could just leave the debugging bar untouched, during development without stopping the debugging process in the background.
