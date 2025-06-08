@@ -35,7 +35,7 @@ services:
     entrypoint: >
       /bin/sh -c '
       sleep 5;
-      /usr/bin/mc config host add s3 http://minio:9000 ${AWS_ACCESS_KEY_ID:?} ${AWS_SECRET_ACCESS_KEY:?} --api S3v4;
+      /usr/bin/mc alias set s3 http://minio:9000 ${AWS_ACCESS_KEY_ID:?} ${AWS_SECRET_ACCESS_KEY:?} --api S3v4;
       /usr/bin/mc mb --ignore-existing --region=${AWS_DEFAULT_REGION:?} s3/${S3_BUCKET_NAME:?};
       exit 0;
       '

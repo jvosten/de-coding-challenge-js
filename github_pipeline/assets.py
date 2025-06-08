@@ -1,13 +1,7 @@
 from typing import Any
 
-from dagster import (
-    AssetExecutionContext,
-    AssetIn,
-    AssetKey,
-    FreshnessPolicy,
-    MetadataValue,
-    asset,
-)
+from dagster import (AssetExecutionContext, AssetIn, AssetKey, FreshnessPolicy,
+                     MetadataValue, asset)
 
 from .resources import GitHubAPIResource
 from .utils import create_markdown_report, extract_metadata
@@ -64,7 +58,8 @@ def iceberg_python_metadata(context: AssetExecutionContext, github_api: GitHubAP
 )
 def hudi_rs_metadata(context: AssetExecutionContext, github_api: GitHubAPIResource) -> dict[str, Any]:
     """Metadata from the GitHub repository of the Hudi Python client."""
-    repo_metadata = github_api.get_repository(owner='apache', repo='hud-rs')
+    # TODO: enhance error propagation of get_repository method
+    repo_metadata = github_api.get_repository(owner='apache', repo='hudi-rs')
 
     context.add_output_metadata(
         metadata={
@@ -90,7 +85,6 @@ def repo_report(
     context: AssetExecutionContext, delta_rs: dict[str, Any], iceberg_python: dict[str, Any], hudi_rs: dict[str, Any]
 ) -> str:
     """Report for comparing GitHub repositories."""
-
     report_data = {
         'delta-rs': extract_metadata(repo_matadata=delta_rs),
         'iceberg-python': extract_metadata(repo_matadata=iceberg_python),
