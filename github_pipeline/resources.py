@@ -1,4 +1,4 @@
-from typing import Any, Generator
+from typing import Any, Generator, List
 from urllib.parse import urljoin
 
 import requests
@@ -94,3 +94,63 @@ class GitHubAPIResource(ConfigurableResource):
         payload = response.json()
 
         return payload
+
+    def get_all_releases(self, owner: str, repo: str) -> list[dict[str, Any]]:
+        """Get all releases for a GitHub repository, handling pagination.
+        Docs: https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#list-releases
+
+        Args:
+            - owner (str): \
+                The account owner of the repository. The name is not case sensitive.
+            - repo (str): \
+                The name of the repository without the `.git` extension. The name is not case sensitive.
+
+        Returns:
+            - list[dict[str, Any]]: \
+                A list of all releases for the repository, where each element is a release object.
+        """
+        path = f'/repos/{owner}/{repo}/releases'
+        releases = []
+        page = 1
+        per_page = 100
+
+        while True:
+            params = {'page': page, 'per_page': per_page}
+            response = self.execute_request(method='GET', path=path, params=params)
+            data = response.json()
+            if not data:
+                break
+            releases.extend(data)
+            page += 1
+
+        return releases
+
+    def get_all_issues(self, owner: str, repo: str) -> list[dict[str, Any]]:
+        """Get all issues for a GitHub repository, handling pagination.
+        Docs: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#list-repository-issues
+
+        Args:
+            - owner (str): \
+                The account owner of the repository. The name is not case sensitive.
+            - repo (str): \
+                The name of the repository without the `.git` extension. The name is not case sensitive.
+
+        Returns:
+            - list[dict[str, Any]]: \
+                A list of all issues for the repository, where each element is an issue object.
+        """
+        path = f'/repos/{owner}/{repo}/issues'
+        issues = []
+        page = 1
+        per_page = 100
+
+        while True:
+            params = {'page': page, 'per_page': per_page, 'state': 'all'}
+            response = self.execute_request(method='GET', path=path, params=params)
+            data = response.json()
+            if not data:
+                break
+            issues.extend(data)
+            page += 1
+
+        return issues
