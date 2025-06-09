@@ -16,16 +16,37 @@ from .utils import create_markdown_report, extract_metadata
 )
 def delta_rs_metadata(context: AssetExecutionContext, github_api: GitHubAPIResource) -> dict[str, Any]:
     """Metadata from the GitHub repository of the Delta Lake Python client."""
-    repo_metadata = github_api.get_repository(owner='delta-io', repo='delta-rs')
+    owner = 'delta-io'
+    repo = 'delta-rs'
 
+    # Fetch all data
+    repo_metadata = github_api.get_repository(owner=owner, repo=repo)
+    all_releases = github_api.get_all_releases(owner=owner, repo=repo)
+    all_issues = github_api.get_all_issues(owner=owner, repo=repo)
+
+    # Combine into one dictionary
+    merged_data = {
+        'metadata': repo_metadata,
+        'releases': all_releases,
+        'issues': all_issues,
+    }
+
+    # Optional: add metadata to context
     context.add_output_metadata(
         metadata={
             'repo link': MetadataValue.url(repo_metadata.get('html_url')),
-            'data preview': MetadataValue.json(repo_metadata),
+            'data preview': MetadataValue.json({
+                'metadata': {
+                    'name': repo_metadata.get('name'),
+                    'description': repo_metadata.get('description'),
+                },
+                'releases_count': len(all_releases),
+                'issues_count': len(all_issues),
+            }),
         }
     )
 
-    return repo_metadata
+    return merged_data
 
 
 @asset(
@@ -35,18 +56,42 @@ def delta_rs_metadata(context: AssetExecutionContext, github_api: GitHubAPIResou
     group_name='github',
     freshness_policy=FreshnessPolicy(maximum_lag_minutes=60 * 24),  # 24 hours
 )
-def iceberg_python_metadata(context: AssetExecutionContext, github_api: GitHubAPIResource) -> dict[str, Any]:
-    """Metadata from the GitHub repository of the Iceberg Python client."""
-    repo_metadata = github_api.get_repository(owner='apache', repo='iceberg-python')
+def iceberg_python_metadata(
+    context: AssetExecutionContext,
+    github_api: GitHubAPIResource,
+) -> dict[str, Any]:
+    """Metadata, releases, and issues from the GitHub repository of the Iceberg Python client."""
+    owner = 'apache'
+    repo = 'iceberg-python'
 
+    # Fetch all data
+    repo_metadata = github_api.get_repository(owner=owner, repo=repo)
+    all_releases = github_api.get_all_releases(owner=owner, repo=repo)
+    all_issues = github_api.get_all_issues(owner=owner, repo=repo)
+
+    # Combine into one dictionary
+    merged_data = {
+        'metadata': repo_metadata,
+        'releases': all_releases,
+        'issues': all_issues,
+    }
+
+    # Optional: add metadata to context
     context.add_output_metadata(
         metadata={
             'repo link': MetadataValue.url(repo_metadata.get('html_url')),
-            'data preview': MetadataValue.json(repo_metadata),
+            'data preview': MetadataValue.json({
+                'metadata': {
+                    'name': repo_metadata.get('name'),
+                    'description': repo_metadata.get('description'),
+                },
+                'releases_count': len(all_releases),
+                'issues_count': len(all_issues),
+            }),
         }
     )
 
-    return repo_metadata
+    return merged_data
 
 
 @asset(
@@ -59,16 +104,37 @@ def iceberg_python_metadata(context: AssetExecutionContext, github_api: GitHubAP
 def hudi_rs_metadata(context: AssetExecutionContext, github_api: GitHubAPIResource) -> dict[str, Any]:
     """Metadata from the GitHub repository of the Hudi Python client."""
     # TODO: enhance error propagation of get_repository method
-    repo_metadata = github_api.get_repository(owner='apache', repo='hudi-rs')
+    owner = 'apache'
+    repo = 'hudi-rs'
 
+    # Fetch all data
+    repo_metadata = github_api.get_repository(owner=owner, repo=repo)
+    all_releases = github_api.get_all_releases(owner=owner, repo=repo)
+    all_issues = github_api.get_all_issues(owner=owner, repo=repo)
+
+    # Combine into one dictionary
+    merged_data = {
+        'metadata': repo_metadata,
+        'releases': all_releases,
+        'issues': all_issues,
+    }
+
+    # Optional: add metadata to context
     context.add_output_metadata(
         metadata={
             'repo link': MetadataValue.url(repo_metadata.get('html_url')),
-            'data preview': MetadataValue.json(repo_metadata),
+            'data preview': MetadataValue.json({
+                'metadata': {
+                    'name': repo_metadata.get('name'),
+                    'description': repo_metadata.get('description'),
+                },
+                'releases_count': len(all_releases),
+                'issues_count': len(all_issues),
+            }),
         }
     )
 
-    return repo_metadata
+    return merged_data
 
 
 @asset(
@@ -86,9 +152,9 @@ def repo_report(
 ) -> str:
     """Report for comparing GitHub repositories."""
     report_data = {
-        'delta-rs': extract_metadata(repo_matadata=delta_rs),
-        'iceberg-python': extract_metadata(repo_matadata=iceberg_python),
-        'hudi-rs': extract_metadata(repo_matadata=hudi_rs),
+        'delta-rs': extract_metadata(repo_metadata=delta_rs),
+        'iceberg-python': extract_metadata(repo_metadata=iceberg_python),
+        'hudi-rs': extract_metadata(repo_metadata=hudi_rs),
     }
 
     return create_markdown_report(context=context, report_data=report_data)
