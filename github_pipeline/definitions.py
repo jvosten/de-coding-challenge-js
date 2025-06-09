@@ -1,17 +1,12 @@
-from dagster import (
-    AssetSelection,
-    Definitions,
-    EnvVar,
-    define_asset_job,
-    load_assets_from_modules,
-)
+from dagster import (AssetSelection, Definitions, EnvVar, define_asset_job,
+                     load_assets_from_modules)
 from dagster_aws.s3 import s3_resource
 
-from . import assets
+from .assets import github_data, report
 from .io_managers import s3_io_manager
 from .resources import GitHubAPIResource
 
-all_assets = load_assets_from_modules([assets])
+all_assets = load_assets_from_modules([github_data, report])
 
 # Job for retrieving GitHub statistics
 github_job = define_asset_job(name='refresh_repository_report', selection=AssetSelection.all())
