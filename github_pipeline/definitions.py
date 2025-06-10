@@ -1,27 +1,20 @@
-from dagster import (AssetSelection, Definitions, EnvVar, define_asset_job,
-                     load_assets_from_modules)
-from dagster_aws.s3 import s3_resource
+import os
 
-from .assets import github_data, report
-from .io_managers import s3_io_manager
-from .resources import GitHubAPIResource
+from dagster import Definitions
 
-all_assets = load_assets_from_modules([github_data, report])
+from .jobs import all_assets, github_job
+from .resources import RESOURCES_DEV
 
-# Job for retrieving GitHub statistics
-github_job = define_asset_job(name='refresh_repository_report', selection=AssetSelection.all())
+resources_by_deployment_name = {
+    'DEV': RESOURCES_DEV
+}
+
+deployment_name = os.getenv('DEPLOYMENT_NAME', 'DEV')
 
 defs = Definitions(
     assets=all_assets,
-    jobs=[github_job],
-    resources={
-        'github_api': GitHubAPIResource(github_token=EnvVar('GITHUB_TOKEN').get_value()),
-        'json_io_manager': s3_io_manager.configured(
-            {'data_type': 'json', 's3_bucket': EnvVar('S3_BUCKET_NAME').get_value()}
-        ),
-        'md_io_manager': s3_io_manager.configured(
-            {'data_type': 'text', 'file_extension': '.md', 's3_bucket': EnvVar('S3_BUCKET_NAME').get_value()}
-        ),
-        's3': s3_resource,
-    },
+    jobs=[
+        github_job
+    ],
+    resources=resources_by_deployment_name[deployment_name],
 )

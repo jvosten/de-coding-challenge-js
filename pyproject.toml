@@ -13,6 +13,7 @@ python = ">=3.10,<3.13"
 dagster = ">=1.8.4"
 dagster-aws = ">=0.24.4"
 pandas = ">=2.2.2"
+s3fs = { extras = ["boto3"], version = "^2025.2.0" }
 
 [tool.poetry.group.dev.dependencies]
 boto3-stubs = {extras = ["s3"], version = ">=1.35.14"}
