@@ -72,6 +72,7 @@ class GitHubAPIResource(ConfigurableResource):
 
         except requests.exceptions.HTTPError as err:
             get_dagster_logger().exception(f'{err!r} - {response.text}')
+            raise
 
         return response
 

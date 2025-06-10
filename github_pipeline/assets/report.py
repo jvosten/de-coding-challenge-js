@@ -25,9 +25,9 @@ def build_report(
     ins = {}
     for repo in repo_configs:
         sanitized_repo = repo["repo"].replace("-", "_")
-        ins[f"{sanitized_repo}_metadata"] = AssetIn(key=AssetKey([f"{sanitized_repo}_metadata"]))
-        ins[f"{sanitized_repo}_releases"] = AssetIn(key=AssetKey([f"{sanitized_repo}_releases"]))
-        ins[f"{sanitized_repo}_issues"] = AssetIn(key=AssetKey([f"{sanitized_repo}_issues"]))
+        asset_types = ["metadata", "releases", "issues"]
+        for asset_type in asset_types:
+            ins[f"{sanitized_repo}_{asset_type}"] = AssetIn(key=AssetKey([f"{sanitized_repo}_{asset_type}"]))
 
     @asset(
         key_prefix=["dm", "reports"],
